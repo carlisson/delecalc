@@ -33,17 +33,17 @@
       v_insc = $("#chapas").val();
       if ((0 < v_vags && v_vags < 501) && (0 < v_insc && v_insc < 501)) {
         for (i = j = 1, ref = v_insc; 1 <= ref ? j <= ref : j >= ref; i = 1 <= ref ? ++j : --j) {
-          p_d.before('<div class="ui labeled input"><div class="ui label">Chapa ' + i + '</div><input type="number" min="0" max="10000" id="votesfor" name="votesfor[' + i + ']"></input></div><br>');
+          p_d.before('<div class="ui labeled input"><div class="ui blue label">Chapa ' + i + '</div><input type="number" min="0" max="10000" id="votesfor" name="votesfor[' + i + ']"></input></div><br>');
         }
         return $.tab('change tab', 'dat');
       }
     });
     return b_d.click(function() {
-      var a_vots, j, k, len, m, maxp, maxv, quoc, results, total, v, v_used, vags;
+      var a_vots, chapa_votes, color, j, k, l, label, len, len1, m, maxp, maxv, min_ok, p, quoc, r_vags, results, total, v, v_inva, v_min, v_used, vags;
       $.tab('change tab', 'res');
       v_vags = $("#vagas").val();
       v_insc = $("#chapas").val();
-      vags = v_vags;
+      v_inva = 0;
       a_vots = $("input[id='votesfor']").map(function() {
         return parseInt($(this).val());
       }).get();
@@ -53,14 +53,53 @@
       total = a_vots.reduce(function(t, s) {
         return t + s;
       });
-      logit("Total de chapas inscritas: " + v_insc);
+      logit("Total de chapas propondo inscrição: " + v_insc);
       logit("Total de vagas em disputa: " + v_vags);
-      logit("Total de votos: " + total);
+      logit("Total de votos: " + (total + parseInt($("#vbrancos").val()) + parseInt($("#vnulos").val())));
+      min_ok = false;
+      while (!min_ok) {
+        min_ok = true;
+        v_min = (function() {
+          switch (false) {
+            case v_insc - v_inva !== 2:
+              return Math.ceil(total * 0.1);
+            case !(v_insc - v_inva > 2):
+              return Math.ceil(total * 0.05);
+            default:
+              return 1;
+          }
+        })();
+        p = 0;
+        for (j = 0, len = a_vots.length; j < len; j++) {
+          chapa_votes = a_vots[j];
+          if (min_ok && results[p] !== 'X') {
+            if (chapa_votes < v_min) {
+              logit("Chapa " + (p + 1) + " não obteve o mínimo de votos necessários e foi eliminada.");
+              v_inva += 1;
+              results[p] = 'X';
+              a_vots[p] = 0;
+              min_ok = false;
+              total = a_vots.reduce(function(t, s) {
+                return t + s;
+              });
+            }
+          }
+          p += 1;
+        }
+      }
+      logit("Total de chapas inscritas: " + (v_insc - v_inva));
+      r_vags = Math.round(total / 10);
+      if (v_vags > r_vags) {
+        vags = r_vags;
+        logit("Total de vagas reajustado para " + r_vags + " devido à quantidade de votantes");
+      } else {
+        vags = v_vags;
+      }
+      logit("Total de votos válidos: " + total);
       logit("Votos nas chapas: " + a_vots);
-      quoc = Math.round(total / v_vags);
+      quoc = Math.round(total / vags);
       logit("Quociente eleitoral de " + quoc);
       while (vags > 0) {
-        console.log(vags + " aqui");
         maxv = Math.max.apply(this, a_vots);
         maxp = a_vots.indexOf(maxv);
         a_vots[maxp] = maxv > quoc ? maxv - quoc : 0;
@@ -68,7 +107,6 @@
         results[maxp] = parseInt(results[maxp]) + 1;
         while (Math.max.apply(this, a_vots) === maxv) {
           m = a_vots.indexOf(maxv);
-          console.log(m + " e " + v_used);
           v_used.push(m + 1);
           results[m] = parseInt(results[m]) + 1;
           a_vots[m] = maxv > quoc ? maxv - quoc : 0;
@@ -87,12 +125,25 @@
           logit("Votos restantes: " + a_vots);
         }
       }
-      for (k = j = 0, len = results.length; j < len; k = ++j) {
+      for (k = l = 0, len1 = results.length; l < len1; k = ++l) {
         v = results[k];
-        p_rs.append("<div class='item'>Chapa <b class='ui grey circular label'>" + (k + 1) + "</b><div class='right floated content'><div class='ui statistic'><div class='value'>" + v + "</div><div class='label'>Delegado(s)</div></div></div></div>");
+        color = (function() {
+          switch (false) {
+            case v !== 0:
+              return "grey";
+            case v !== 'X':
+              return "yellow";
+            default:
+              return "blue";
+          }
+        })();
+        if (v === 'X') {
+          v = 0;
+        }
+        label = v > 1 ? "Delegados" : "Delegado";
+        p_rs.append("<div class='item'>Chapa <b class='ui circular label'>" + (k + 1) + "</b><div class='right floated content'><div class='ui " + color + " statistic'><div class='value'>" + v + "</div><div class='label'>" + label + "</div></div></div></div>");
       }
-      logit("Apuração concluída.");
-      return console.log(results);
+      return logit("Apuração concluída.");
     });
   };
 

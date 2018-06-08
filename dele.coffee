@@ -22,25 +22,54 @@ ready = ->
     v_vags = $("#vagas").val()
     v_insc = $("#chapas").val()
     if 0 < v_vags < 501 and 0 < v_insc < 501
-      p_d.before('<div class="ui labeled input"><div class="ui label">Chapa ' + i + '</div><input type="number" min="0" max="10000" id="votesfor" name="votesfor[' + i + ']"></input></div><br>') for i in [1..v_insc]
+      p_d.before('<div class="ui labeled input"><div class="ui blue label">Chapa ' + i + '</div><input type="number" min="0" max="10000" id="votesfor" name="votesfor[' + i + ']"></input></div><br>') for i in [1..v_insc]
       $.tab('change tab', 'dat')
 
   b_d.click ->
     $.tab('change tab', 'res')
     v_vags = $("#vagas").val()
     v_insc = $("#chapas").val()
-    vags = v_vags
+    v_inva = 0 #Inscrições de chapa inválidas
     a_vots = $("input[id='votesfor']").map( -> return parseInt($(this).val()) ).get()
     results = $("input[id='votesfor']").map( -> return 0).get()
     total = a_vots.reduce (t, s) -> t + s
-    logit "Total de chapas inscritas: " + v_insc
+    logit "Total de chapas propondo inscrição: " + v_insc
     logit "Total de vagas em disputa: " + v_vags
-    logit "Total de votos: " + total
+    logit "Total de votos: " + (total + parseInt($("#vbrancos").val()) + parseInt($("#vnulos").val()) )
+
+    # Verificar se isso se aplica realmente de maneira recursiva
+
+    min_ok = false
+    while ! min_ok
+      min_ok = true
+      v_min = switch
+        when v_insc - v_inva == 2 then Math.ceil(total * 0.1)
+        when v_insc - v_inva > 2 then Math.ceil(total * 0.05)
+        else 1
+      p = 0
+      for chapa_votes in a_vots
+        if min_ok and results[p] != 'X'
+          if chapa_votes < v_min
+            logit "Chapa " + (p+1) + " não obteve o mínimo de votos necessários e foi eliminada."
+            v_inva += 1
+            results[p] = 'X'
+            a_vots[p] = 0
+            min_ok = false
+            total = a_vots.reduce (t, s) -> t + s
+        p += 1
+
+    logit "Total de chapas inscritas: " + (v_insc - v_inva)
+    r_vags = Math.round(total/10)
+    if v_vags > r_vags
+      vags = r_vags
+      logit "Total de vagas reajustado para " + r_vags + " devido à quantidade de votantes"
+    else
+      vags = v_vags
+    logit "Total de votos válidos: " + total
     logit "Votos nas chapas: " + a_vots
-    quoc = Math.round(total / v_vags)
+    quoc = Math.round(total / vags)
     logit "Quociente eleitoral de " + quoc
     while vags > 0
-      console.log vags + " aqui"
       maxv = Math.max.apply(this,a_vots)
       maxp = a_vots.indexOf(maxv)
       a_vots[maxp] = if maxv > quoc then maxv - quoc else 0
@@ -48,7 +77,6 @@ ready = ->
       results[maxp] = parseInt(results[maxp]) + 1
       while Math.max.apply(this, a_vots) == maxv
         m = a_vots.indexOf(maxv)
-        console.log m + " e " + v_used
         v_used.push(m+1)
         results[m] = parseInt(results[m]) + 1
         a_vots[m] = if maxv > quoc then maxv - quoc else 0
@@ -64,9 +92,14 @@ ready = ->
         vags = vags - v_used.length
         logit "Votos restantes: " + a_vots
     for v, k in results
-      p_rs.append("<div class='item'>Chapa <b class='ui grey circular label'>" + (k+1) + "</b><div class='right floated content'><div class='ui statistic'><div class='value'>" + v + "</div><div class='label'>Delegado(s)</div></div></div></div>")
+      color = switch
+        when v == 0 then "grey"
+        when v == 'X' then "yellow"
+        else "blue"
+      v = 0 if v == 'X'
+      label = if v > 1 then "Delegados" else "Delegado"
+      p_rs.append("<div class='item'>Chapa <b class='ui circular label'>" + (k+1) + "</b><div class='right floated content'><div class='ui " + color + " statistic'><div class='value'>" + v + "</div><div class='label'>" + label + "</div></div></div></div>")
     logit "Apuração concluída."
-    console.log results
 
 $(document).ready(ready)
 $(document).on('page:load', ready)
