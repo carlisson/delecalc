@@ -83,6 +83,21 @@
       <li>Caso haja mais de 2 chapas, cada chapa precisa ter pelo menos 5% do total de votos;</li>
       <li>A definição de quais delegados uma chapa vai levar depende de acordo prévio da chapa. Na maioria dos casos, a sequência na listagem é usada para definir quais delegados sairão de determinada chapa.</li>
     </ul>
+    Por exemplo, se há 4 chapas disputando 3 vagas e elas obtém, respectivamente, 15, 44, 2 e 27 votos:
+    <ul>
+      <li>Sendo 88 votos, 5% equivale a 4,4 votos. Ou seja, quem tiver menos que 5 votos inteiros não pode concorrer</li>
+      <li>Chapa 3 é eliminada por ter obtido apenas 2 votos</li>
+      <li>Com 3 chapas habilitadas, devemos considerar o novo total: 86 votos</li>
+      <li>O quociente eleitoral é calculado na forma: total/vagas. 88/3 dá 28,7</li>
+      <li>Isso significa que a cada 28,7 votos cada chapa elege 1 delegado</li>
+      <li>A mais votada foi a chapa 2, então ela elege o primeiro delegado</li>
+      <li>Para eleger este delegado, ela "gastou" 28,7 votos, ficando com 15,3 votos.</li>
+      <li>Nenhuma chapa tem mais o quociente eleitoral. Como ainda há vagas, continuaremos a distribuir essas vagas às chapas mais votadas (com votos ainda não utilizados).</li>
+      <li>A mais votada agora é a Chapa 4, com 27 votos. Ela fica com a segunda vaga de delegado. Como 27 é menos que 28,7, ela gasta todos os votos que tinha para conseguir esta vaga.</li>
+      <li>Resta uma vaga e duas chapas que ainda têm votos: Chapa 1 com seus 15 votos iniciais; chapa 2 com seus 15,3 votos remanescentes.</li>
+      <li>Como a Chapa 2 tem mais votos agora (0,3 a mais que a Chapa 1), ela fica com a terceira vaga de delegado.</li>
+      <li>Sem mais vagas, a Chapa 1, com seus 15 votos remanescentes (todas as outras estão sem votos agora), não elege ninguém</li>
+    </ul>
   </div>
   <div class="actions">
     <div class="ui positive right labeled icon button">
