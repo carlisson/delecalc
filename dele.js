@@ -49,7 +49,7 @@
       v_insc = parseInt($("#chapas").val());
       v_inva = 0;
       a_vots = $("input[id='votesfor']").map(function() {
-        return parseInt($(this).val());
+        return parseInt($(this).val() || 0);
       }).get();
       results = $("input[id='votesfor']").map(function() {
         return 0;
