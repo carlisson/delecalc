@@ -1,10 +1,23 @@
 
+lcount = 1 # Contador de linhas/passos da apuração
+
 logit = (msg, chapa = "none") ->
   plus = ""
+  pre = ""
   if chapa != "none"
-    color = if chapa == "!" then "red" else if chapa == "+" then "green" else "grey"
-    plus = if chapa == "none" then "" else "<a class='ui " + color+ " circular label'>" + chapa + "</a>"
-  $("#log").append("<div class='item'><div class='content'>" + plus + " " + msg + "</div></div>")
+    if typeof chapa == "object"
+      plus = ("<a class='ui grey circular label'>" + c + "</a>" for c in chapa)
+      plus.toString(' ')
+      plus = "<a class='ui green label'>+</a>Chapas " + plus
+    else
+      color = if chapa == "!" then "red" else if chapa == "+" then "green" else "grey"
+      plus = switch
+        when chapa == "none" then ""
+        when chapa == "!" then "<a class='ui " + color+ " label'>" + chapa + "</a>"
+        else  "<a class='ui " + color+ " circular label'>" + chapa + "</a>"
+    pre = lcount + ": "
+    lcount += 1
+  $("#log").append("<div class='item'><div class='content'>" + pre + plus + " " + msg + "</div></div>")
 
 ready = ->
   p_i = $("#initial")
@@ -73,6 +86,7 @@ ready = ->
     logit "Votos nas chapas: " + a_vots
     quoc = (total / vags).toFixed(1)
     logit "Quociente eleitoral de " + quoc
+    logit "Iniciando a apuração"
     while vags > 0
       maxv = Math.max.apply(this,a_vots)
       maxp = a_vots.indexOf(maxv)
@@ -90,9 +104,9 @@ ready = ->
         return
       else
         if v_used.length > 1
-          logit "Chapas " + v_used + " empataram, cada um tem um representante.", "+"
+          logit "empataram, cada um tem um representante.", v_used
         else
-          logit "Chapa " + v_used[0] + " ficou com a próxima vaga.", v_used[0]
+          logit "Chapa " + v_used[0] + " garantiu uma vaga.", v_used[0]
         vags = vags - v_used.length
         logit "Votos restantes: " + a_vots
     for v, k in results
