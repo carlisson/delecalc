@@ -35,7 +35,7 @@ ready = ->
     v_vags = parseInt($("#vagas").val())
     v_insc = parseInt($("#chapas").val())
     v_inva = 0 #Inscrições de chapa inválidas
-    a_vots = $("input[id='votesfor']").map( -> return parseInt($(this).val()) ).get()
+    a_vots = $("input[id='votesfor']").map( -> return parseInt($(this).val() or 0) ).get()
     results = $("input[id='votesfor']").map( -> return 0).get()
     total = a_vots.reduce (t, s) -> t + s
     brn = parseInt($("#vbrancos").val() or 0)
