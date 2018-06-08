@@ -39,7 +39,7 @@
       }
     });
     return b_d.click(function() {
-      var a_vots, chapa_votes, color, j, k, l, label, len, len1, m, maxp, maxv, min_ok, p, quoc, r_vags, results, total, v, v_inva, v_min, v_used, vags;
+      var a_vots, chapa_votes, color, j, k, l, label, len, len1, m, maxp, maxv, p, quoc, r_vags, results, total, v, v_inva, v_min, v_used, vags;
       $.tab('change tab', 'res');
       v_vags = $("#vagas").val();
       v_insc = $("#chapas").val();
@@ -56,36 +56,30 @@
       logit("Total de chapas propondo inscrição: " + v_insc);
       logit("Total de vagas em disputa: " + v_vags);
       logit("Total de votos: " + (total + parseInt($("#vbrancos").val()) + parseInt($("#vnulos").val())));
-      min_ok = false;
-      while (!min_ok) {
-        min_ok = true;
-        v_min = (function() {
-          switch (false) {
-            case v_insc - v_inva !== 2:
-              return Math.ceil(total * 0.1);
-            case !(v_insc - v_inva > 2):
-              return Math.ceil(total * 0.05);
-            default:
-              return 1;
-          }
-        })();
-        p = 0;
-        for (j = 0, len = a_vots.length; j < len; j++) {
-          chapa_votes = a_vots[j];
-          if (min_ok && results[p] !== 'X') {
-            if (chapa_votes < v_min) {
-              logit("Chapa " + (p + 1) + " não obteve o mínimo de votos necessários e foi eliminada.");
-              v_inva += 1;
-              results[p] = 'X';
-              a_vots[p] = 0;
-              min_ok = false;
-              total = a_vots.reduce(function(t, s) {
-                return t + s;
-              });
-            }
-          }
-          p += 1;
+      v_min = (function() {
+        switch (false) {
+          case v_insc - v_inva !== 2:
+            return Math.ceil(total * 0.1);
+          case !(v_insc - v_inva > 2):
+            return Math.ceil(total * 0.05);
+          default:
+            return 1;
         }
+      })();
+      logit("Mínimo de votos necessários para concorrer: " + v_min);
+      p = 0;
+      for (j = 0, len = a_vots.length; j < len; j++) {
+        chapa_votes = a_vots[j];
+        if (chapa_votes < v_min) {
+          logit("Chapa " + (p + 1) + " não obteve o mínimo de votos necessários e foi eliminada.");
+          v_inva += 1;
+          results[p] = 'X';
+          a_vots[p] = 0;
+          total = a_vots.reduce(function(t, s) {
+            return t + s;
+          });
+        }
+        p += 1;
       }
       logit("Total de chapas inscritas: " + (v_insc - v_inva));
       r_vags = Math.round(total / 10);
@@ -97,12 +91,12 @@
       }
       logit("Total de votos válidos: " + total);
       logit("Votos nas chapas: " + a_vots);
-      quoc = Math.round(total / vags);
+      quoc = (total / vags).toFixed(1);
       logit("Quociente eleitoral de " + quoc);
       while (vags > 0) {
         maxv = Math.max.apply(this, a_vots);
         maxp = a_vots.indexOf(maxv);
-        a_vots[maxp] = maxv > quoc ? maxv - quoc : 0;
+        a_vots[maxp] = maxv > quoc ? Number(Math.round((maxv - quoc) + 'e2') + 'e-2') : 0;
         v_used = [maxp + 1];
         results[maxp] = parseInt(results[maxp]) + 1;
         while (Math.max.apply(this, a_vots) === maxv) {

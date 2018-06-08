@@ -37,26 +37,20 @@ ready = ->
     logit "Total de vagas em disputa: " + v_vags
     logit "Total de votos: " + (total + parseInt($("#vbrancos").val()) + parseInt($("#vnulos").val()) )
 
-    # Verificar se isso se aplica realmente de maneira recursiva
-
-    min_ok = false
-    while ! min_ok
-      min_ok = true
-      v_min = switch
-        when v_insc - v_inva == 2 then Math.ceil(total * 0.1)
-        when v_insc - v_inva > 2 then Math.ceil(total * 0.05)
-        else 1
-      p = 0
-      for chapa_votes in a_vots
-        if min_ok and results[p] != 'X'
-          if chapa_votes < v_min
-            logit "Chapa " + (p+1) + " não obteve o mínimo de votos necessários e foi eliminada."
-            v_inva += 1
-            results[p] = 'X'
-            a_vots[p] = 0
-            min_ok = false
-            total = a_vots.reduce (t, s) -> t + s
-        p += 1
+    v_min = switch
+      when v_insc - v_inva == 2 then Math.ceil(total * 0.1)
+      when v_insc - v_inva > 2 then Math.ceil(total * 0.05)
+      else 1
+    logit "Mínimo de votos necessários para concorrer: " + v_min
+    p = 0
+    for chapa_votes in a_vots
+      if chapa_votes < v_min
+        logit "Chapa " + (p+1) + " não obteve o mínimo de votos necessários e foi eliminada."
+        v_inva += 1
+        results[p] = 'X'
+        a_vots[p] = 0
+        total = a_vots.reduce (t, s) -> t + s
+      p += 1
 
     logit "Total de chapas inscritas: " + (v_insc - v_inva)
     r_vags = Math.round(total/10)
@@ -67,12 +61,12 @@ ready = ->
       vags = v_vags
     logit "Total de votos válidos: " + total
     logit "Votos nas chapas: " + a_vots
-    quoc = Math.round(total / vags)
+    quoc = (total / vags).toFixed(1)
     logit "Quociente eleitoral de " + quoc
     while vags > 0
       maxv = Math.max.apply(this,a_vots)
       maxp = a_vots.indexOf(maxv)
-      a_vots[maxp] = if maxv > quoc then maxv - quoc else 0
+      a_vots[maxp] = if maxv > quoc then Number(Math.round((maxv - quoc) + 'e2') + 'e-2') else 0
       v_used = [maxp+1]
       results[maxp] = parseInt(results[maxp]) + 1
       while Math.max.apply(this, a_vots) == maxv
