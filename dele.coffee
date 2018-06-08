@@ -16,8 +16,13 @@ ready = ->
   v_vags = $("#vagas").val()
   b_i = $("#initial-finish")
   b_d = $("#data-finish")
+  b_a = $("#about-box")
 
   $('.ui.accordion').accordion()
+
+  b_a.click ->
+    $('.ui.modal').modal('show')
+
   b_i.click ->
     v_vags = $("#vagas").val()
     v_insc = $("#chapas").val()
@@ -27,15 +32,20 @@ ready = ->
 
   b_d.click ->
     $.tab('change tab', 'res')
-    v_vags = $("#vagas").val()
-    v_insc = $("#chapas").val()
+    v_vags = parseInt($("#vagas").val())
+    v_insc = parseInt($("#chapas").val())
     v_inva = 0 #Inscrições de chapa inválidas
     a_vots = $("input[id='votesfor']").map( -> return parseInt($(this).val()) ).get()
     results = $("input[id='votesfor']").map( -> return 0).get()
     total = a_vots.reduce (t, s) -> t + s
-    logit "Total de chapas propondo inscrição: " + v_insc
+    brn = parseInt($("#vbrancos").val() or 0)
+    nls = parseInt($("#vnulos").val() or 0)
+    logit "Total de chapas inscritas: " + v_insc
     logit "Total de vagas em disputa: " + v_vags
-    logit "Total de votos: " + (total + parseInt($("#vbrancos").val()) + parseInt($("#vnulos").val()) )
+    logit "Votos em branco: " + brn
+    logit "Votos nulos: " + nls
+    logit "Votos nas chapas: " + a_vots
+    logit "Total de votos: " + (total + brn + nls)
 
     v_min = switch
       when v_insc - v_inva == 2 then Math.ceil(total * 0.1)
@@ -52,7 +62,7 @@ ready = ->
         total = a_vots.reduce (t, s) -> t + s
       p += 1
 
-    logit "Total de chapas inscritas: " + (v_insc - v_inva)
+    logit "Total de chapas aptas: " + (v_insc - v_inva)
     r_vags = Math.round(total/10)
     if v_vags > r_vags
       vags = r_vags

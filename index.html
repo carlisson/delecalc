@@ -13,16 +13,10 @@
         </head>
         <body>
 
-<h1 class="ui header">Calculadora para Eleição de Delegados</h1>
+<h1 class="ui center aligned header">DeleCalc <a id="about-box" class="ui mini circular red button">?</a></h1>
 
 <div class="ui tab container active" data-tab="ini">
 <h2 class="ui header">Configuração Inicial</h2>
-<div class="ui message">
-  <div class="header">
-    Nomes por Chapa
-  </div>
-  <p>Cada chapa precisa ter inscritos pelo menos uma quantidade de nomes equivalente ao número de vagas em disputa.</p>
-</div>
 	<form id="initial">
 		<div class="ui labeled input">
 		  <div class="ui label">
@@ -72,7 +66,32 @@
 
 </div>
 
+<div class="ui modal">
+  <div class="header">
+    Sobre o DeleCalc
+  </div>
+  <div class="content">
+    DeleCalc foi criado para facilitar a contagem de votos em eleições para delegados
+    de sindicatos de base da Fasubra, sejam para Congresso ou Plenária. As regras
+    utilizadas estão no <a href="http://fasubra.org.br/wp-content/uploads/2016/10/estatuto.pdf">
+    Estatuto da Fasubra</a>. Em resumo:
+    <ul>
+      <li>Eleição se dá através de chapas. Cada chapa precisa ter uma quantidade de participantes inscritos, no mínimo 20% da quantidade de vagas para delegado em disputa;</li>
+      <li>O total de vagas aceitas pela Fasubra leva em conta a base do sindicato. Consulte o Estatuto;</li>
+      <li>As vagas de fato precisam levar em conta a quantidade de votantes (aplicado o limite acima). A cada 10 votantes, um delegado é permitido; acrescido de 1 caso o restante seja superior ou igual a 5;</li>
+      <li>Caso 2 chapas estejam disputando vagas, cada chapa precisa ter pelo menos 10% dos votos para ser habilitada;</li>
+      <li>Caso haja mais de 2 chapas, cada chapa precisa ter pelo menos 5% do total de votos;</li>
+      <li>A definição de quais delegados uma chapa vai levar depende de acordo prévio da chapa. Na maioria dos casos, a sequência na listagem é usada para definir quais delegados sairão de determinada chapa.</li>
+    </ul>
+  </div>
+  <div class="actions">
+    <div class="ui positive right labeled icon button">
+      Ok
+    </div>
+  </div>
+</div>
+
 <div class="ui divider"></div>
-<div style="text-align: center"><b class="ui red circular label">D</b> <a href="https://github.com/carlisson/delecalc">Delecalc 1.0 RC2</a> - Desenvolvido por Cárlisson Galdino</div>
+<div style="text-align: center; font-size: small"><b class="ui red circular label">D</b> <a href="https://github.com/carlisson/delecalc">DeleCalc 1.0</a> - Desenvolvido por Cárlisson Galdino</div>
         </body>
     </html>

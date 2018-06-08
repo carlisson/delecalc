@@ -16,7 +16,7 @@
   };
 
   ready = function() {
-    var b_d, b_i, p_d, p_i, p_r, p_rd, p_rs, v_insc, v_vags;
+    var b_a, b_d, b_i, p_d, p_i, p_r, p_rd, p_rs, v_insc, v_vags;
     p_i = $("#initial");
     p_d = $("#data");
     p_r = $("#result");
@@ -26,7 +26,11 @@
     v_vags = $("#vagas").val();
     b_i = $("#initial-finish");
     b_d = $("#data-finish");
+    b_a = $("#about-box");
     $('.ui.accordion').accordion();
+    b_a.click(function() {
+      return $('.ui.modal').modal('show');
+    });
     b_i.click(function() {
       var i, j, ref;
       v_vags = $("#vagas").val();
@@ -39,10 +43,10 @@
       }
     });
     return b_d.click(function() {
-      var a_vots, chapa_votes, color, j, k, l, label, len, len1, m, maxp, maxv, p, quoc, r_vags, results, total, v, v_inva, v_min, v_used, vags;
+      var a_vots, brn, chapa_votes, color, j, k, l, label, len, len1, m, maxp, maxv, nls, p, quoc, r_vags, results, total, v, v_inva, v_min, v_used, vags;
       $.tab('change tab', 'res');
-      v_vags = $("#vagas").val();
-      v_insc = $("#chapas").val();
+      v_vags = parseInt($("#vagas").val());
+      v_insc = parseInt($("#chapas").val());
       v_inva = 0;
       a_vots = $("input[id='votesfor']").map(function() {
         return parseInt($(this).val());
@@ -53,9 +57,14 @@
       total = a_vots.reduce(function(t, s) {
         return t + s;
       });
-      logit("Total de chapas propondo inscrição: " + v_insc);
+      brn = parseInt($("#vbrancos").val() || 0);
+      nls = parseInt($("#vnulos").val() || 0);
+      logit("Total de chapas inscritas: " + v_insc);
       logit("Total de vagas em disputa: " + v_vags);
-      logit("Total de votos: " + (total + parseInt($("#vbrancos").val()) + parseInt($("#vnulos").val())));
+      logit("Votos em branco: " + brn);
+      logit("Votos nulos: " + nls);
+      logit("Votos nas chapas: " + a_vots);
+      logit("Total de votos: " + (total + brn + nls));
       v_min = (function() {
         switch (false) {
           case v_insc - v_inva !== 2:
@@ -81,7 +90,7 @@
         }
         p += 1;
       }
-      logit("Total de chapas inscritas: " + (v_insc - v_inva));
+      logit("Total de chapas aptas: " + (v_insc - v_inva));
       r_vags = Math.round(total / 10);
       if (v_vags > r_vags) {
         vags = r_vags;
